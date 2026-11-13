@@ -4,9 +4,9 @@
 
 ## 1. Project Information
 
-- **Team Name:** [Insert team name]
+- **Team Name:** Print_Owl
 - **Team Members:**
-  - [Member 1 – Full Name]
+  - [Member 1 – 
   - [Member 2 – Full Name]
   - [Add or remove members as needed]
 - **Category:** Web
