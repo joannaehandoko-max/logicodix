@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LearnAble — Accessible AI Learning Hub</title>
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--text:#172033;--muted:#5b6676;--primary:#2857ff;--primary-dark:#1c3fc4;--border:#d9e0ea;--focus:#ffbf00}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+.skip-link{position:absolute;left:-999px;top:0;background:#000;color:#fff;padding:10px 14px;z-index:100}.skip-link:focus{left:10px;top:10px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 20px;background:#fff;border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:10px}.logo{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:10px;background:var(--primary);color:#fff;font-size:20px}.brand small{display:block;color:var(--muted)}
+.container{max-width:1100px;margin:auto;padding:22px 16px 60px}.hero{text-align:center;padding:28px 10px 10px}.hero h1{font-size:clamp(1.8rem,4vw,2.7rem);margin:.2em 0}.hero p{max-width:680px;margin:0 auto;color:var(--muted)}
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}.badge{background:#e7edff;color:#1c3fc4;border:1px solid #c8d6ff;padding:6px 12px;border-radius:999px;font-size:.85rem;font-weight:600}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-top:18px;box-shadow:0 2px 8px rgba(20,30,60,.05)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:820px){.grid{grid-template-columns:1fr}}
+label{display:block;font-weight:600;margin:12px 0 6px}input[type=text],textarea{width:100%;padding:12px;border:2px solid var(--border);border-radius:10px;font:inherit}input:focus,textarea:focus,button:focus{outline:3px solid var(--focus);outline-offset:2px}textarea{resize:vertical}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.btn{border:2px solid var(--border);background:#fff;color:var(--text);padding:11px 16px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer;transition:transform .15s}.btn:hover{transform:translateY(-1px)}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary-dark)}.btn.ghost{background:transparent}.btn.small{padding:7px 11px;font-size:.9rem}.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.output{background:#f4f7ff;border:1px solid #d7e0fb;border-radius:12px;padding:14px;min-height:70px}.output.small{margin-top:12px}.output h3{margin:8px 0 6px}.output ul{padding-left:20px}
+.flashcards{display:grid;gap:10px;margin-top:10px}.flashcard{background:#fff;border:1px solid var(--border);border-left:5px solid var(--primary);border-radius:10px;padding:10px 12px}.muted{color:var(--muted)}.status{min-height:22px;color:var(--primary-dark);font-weight:600}
+.quiz-q{font-size:1.08rem;font-weight:700}.options{display:grid;gap:8px;margin-top:12px}.option{text-align:left;padding:12px;border:2px solid var(--border);border-radius:10px;background:#fff;font:inherit;cursor:pointer}.option:hover{border-color:var(--primary)}.option.correct{border-color:#0f8a4d;background:#eaf7ef}.option.wrong{border-color:#c62b2b;background:#fdecec}
+.progress-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:680px){.progress-grid{grid-template-columns:repeat(2,1fr)}}.metric{background:#f4f7ff;border:1px solid #d7e0fb;border-radius:12px;padding:14px;text-align:center}.metric span{display:block;font-size:1.5rem;font-weight:800;color:var(--primary)}
+.topic-list{display:grid;gap:8px;margin-top:10px}.topic-item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px}.bar{height:10px;background:#e6ebf3;border-radius:999px;overflow:hidden;grid-column:1/-1}.bar span{display:block;height:100%;background:var(--primary)}
+.a11y-panel{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--border);padding:14px 20px}.a11y-grid{display:flex;flex-wrap:wrap;gap:14px;align-items:center}.a11y-grid label{display:flex;align-items:center;gap:8px;margin:0;font-weight:600}.hint{color:var(--muted);font-size:.9rem}
+.footer{text-align:center;padding:24px;color:var(--muted);border-top:1px solid var(--border);background:#fff}
+body.high-contrast{--bg:#000;--card:#000;--text:#fff;--muted:#d8d8d8;--border:#fff;--primary:#ffd400;--primary-dark:#e0b400;--focus:#00e5ff}body.high-contrast .btn{background:#000;color:#fff;border-color:#fff}body.high-contrast .btn.primary{background:#ffd400;color:#000;border-color:#ffd400}body.high-contrast .output,body.high-contrast .metric{background:#111;border-color:#fff}
+body.dyslexia-font{font-family:Verdana,Tahoma,sans-serif;letter-spacing:.03em}body.reduce-motion *{transition:none!important;animation:none!important}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="topbar">
+ <div class="brand"><span class="logo">◆</span><div><strong>LearnAble</strong><small>Accessible AI Learning Hub</small></div></div>
+ <button id="a11yBtn" class="btn ghost" aria-expanded="false" aria-controls="a11yPanel">♿ Accessibility</button>
+</header>
+<section id="a11yPanel" class="a11y-panel" hidden>
+ <h2>Accessibility settings</h2>
+ <div class="a11y-grid">
+  <label><input type="checkbox" id="highContrast"> High contrast</label>
+  <label><input type="checkbox" id="dyslexiaFont"> Dyslexia-friendly font</label>
+  <label><input type="checkbox" id="reduceMotion"> Reduce motion</label>
+  <label>Text size <input type="range" id="textSize" min="90" max="150" value="100"></label>
+  <button id="resetA11y" class="btn small">Reset</button>
+ </div>
+ <p class="hint">Use <kbd>Tab</kbd> to navigate and <kbd>Enter</kbd>/<kbd>Space</kbd> to activate controls.</p>
+</section>
+<main id="main" class="container">
+ <section class="hero"><h1>Learn in the way that works for you</h1><p>LearnAble turns your notes into simple explanations, flashcards, and adaptive quizzes. Listen, adjust the display, and learn at your own pace.</p><div class="badges"><span class="badge">AI Study Buddy</span><span class="badge">Adaptive Quiz Coach</span><span class="badge">Accessible by design</span></div></section>
+ <section class="card">
+  <h2>1. Add your learning material</h2>
+  <label for="topic">Topic or title</label><input id="topic" type="text" placeholder="Example: Photosynthesis">
+  <label for="material">Paste notes, lesson text, or a short explanation</label><textarea id="material" rows="7" placeholder="Paste your notes here..."></textarea>
+  <div class="row"><button id="generateBtn" class="btn primary">✨ Generate study kit</button><button id="speakMaterialBtn" class="btn">🔊 Listen to material</button><button id="stopSpeakBtn" class="btn ghost">■ Stop audio</button></div>
+  <p id="status" class="status" role="status" aria-live="polite"></p>
+ </section>
+ <section class="grid">
+  <section class="card"><h2>2. AI Study Buddy</h2><div id="studyOutput" class="output"><p class="muted">Add material above, then generate your study kit.</p></div><div class="row"><button id="speakSummaryBtn" class="btn">🔊 Listen to explanation</button><button id="askBtn" class="btn ghost">Ask a question</button></div><div id="askArea" hidden><label for="question">Ask about this material</label><input id="question" type="text" placeholder="Example: Explain photosynthesis simply"><button id="askSubmit" class="btn primary">Get answer</button><div id="answerOutput" class="output small"></div></div></section>
+  <section class="card"><h2>3. Adaptive Quiz Coach</h2><p class="muted">Correct answers increase difficulty. Incorrect answers provide simpler support.</p><div id="quizArea"><p class="muted">Generate a study kit first to unlock your personalized quiz.</p></div><div class="row"><button id="startQuizBtn" class="btn primary" disabled>Start adaptive quiz</button></div><div id="quizFeedback" class="output small" aria-live="polite"></div></section>
+ </section>
+ <section class="card"><h2>4. Your learning progress</h2><div class="progress-grid"><div class="metric"><span id="streakValue">0</span><small>Day streak</small></div><div class="metric"><span id="quizCount">0</span><small>Questions answered</small></div><div class="metric"><span id="accuracyValue">0%</span><small>Accuracy</small></div><div class="metric"><span id="masteredValue">0</span><small>Topics practiced</small></div></div><h3>Topic mastery</h3><div id="topicMastery" class="topic-list"><p class="muted">No topics practiced yet.</p></div><button id="clearProgress" class="btn ghost small">Clear saved progress</button></section>
+</main>
+<footer class="footer"><p><strong>LearnAble</strong> — AI Study Buddy + Adaptive Quiz Coach + Accessible Learning Hub.</p><p class="muted">Your progress is stored locally in your browser.</p></footer>
+<script>
+const $=id=>document.getElementById(id);
+const state={material:"",topic:"",summary:"",questions:[],qIndex:0,level:1,correct:0,wrong:0};
+const GEMINI_KEY=""; // Optional: add a Gemini API key locally. Never commit a real key.
+
+const a11y=JSON.parse(localStorage.getItem("learnable_a11y")||"{}");
+function applyA11y(){document.body.classList.toggle("high-contrast",!!a11y.highContrast);document.body.classList.toggle("dyslexia-font",!!a11y.dyslexiaFont);document.body.classList.toggle("reduce-motion",!!a11y.reduceMotion);document.documentElement.style.fontSize=(a11y.textSize||100)+"%";$("highContrast").checked=!!a11y.highContrast;$("dyslexiaFont").checked=!!a11y.dyslexiaFont;$("reduceMotion").checked=!!a11y.reduceMotion;$("textSize").value=a11y.textSize||100;}
+$("a11yBtn").onclick=()=>{const p=$("a11yPanel");p.hidden=!p.hidden;$("a11yBtn").setAttribute("aria-expanded",String(!p.hidden));};
+["highContrast","dyslexiaFont","reduceMotion"].forEach(id=>{$(id).onchange=e=>{a11y[id]=e.target.checked;localStorage.setItem("learnable_a11y",JSON.stringify(a11y));applyA11y();};});
+$("textSize").oninput=e=>{a11y.textSize=+e.target.value;localStorage.setItem("learnable_a11y",JSON.stringify(a11y));applyA11y();};
+$("resetA11y").onclick=()=>{localStorage.removeItem("learnable_a11y");Object.keys(a11y).forEach(k=>delete a11y[k]);applyA11y();};
+applyA11y();
+
+function speak(text){if(!("speechSynthesis" in window)){setStatus("Speech is not supported in this browser.");return;}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=.95;u.lang="en-US";speechSynthesis.speak(u);}
+$("speakMaterialBtn").onclick=()=>speak($("material").value||"Please add learning material first.");
+$("speakSummaryBtn").onclick=()=>speak(state.summary||"Generate a study kit first.");
+$("stopSpeakBtn").onclick=()=>speechSynthesis.cancel();
+function setStatus(m){$("status").textContent=m;}
+
+function sentences(t){return t.replace(/\s+/g," ").split(/(?<=[.!?])\s+/).filter(s=>s.length>25);}
+function keywords(t){const stop=new Set("the a an and or but of to in on for with is are was were be been this that these those it its as at by from can will may should".split(" "));const f={};t.toLowerCase().replace(/[^a-z0-9\s]/g," ").split(/\s+/).forEach(w=>{if(w.length>3&&!stop.has(w))f[w]=(f[w]||0)+1;});return Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,8).map(x=>x[0]);}
+function localKit(topic,material){const s=sentences(material),keys=keywords(material);const summary=s.slice(0,3).join(" ")||topic+" is an important topic. Review the main ideas and practice with questions.";const keyPoints=s.slice(0,5).map(x=>x.length>180?x.slice(0,177)+"...":x);const flashcards=keys.slice(0,5).map(k=>({q:"What is the role of "+k+" in "+topic+"?",a:"Review the part of your notes that explains "+k+". It is an important concept in this material."}));const questions=keys.slice(0,6).map((k,i)=>{const d=keys.filter(x=>x!==k).slice(0,3);const opts=[k,...d].sort(()=>Math.random()-.5);return{level:Math.min(3,1+Math.floor(i/2)),text:"Which term is most closely related to this material: "+k+"?",options:opts,answer:k,explanation:k+" appears as a key concept in your material about "+topic+"."};});return{summary,keyPoints,flashcards,questions};}
+
+async function gemini(prompt){if(!GEMINI_KEY)return null;try{const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+GEMINI_KEY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const d=await r.json();return d?.candidates?.[0]?.content?.parts?.[0]?.text||null;}catch(e){return null;}}
+
+$("generateBtn").onclick=async()=>{const topic=$("topic").value.trim(),material=$("material").value.trim();if(!topic||material.length<30){setStatus("Please enter a topic and at least a few sentences of material.");return;}setStatus("Creating your accessible study kit...");state.topic=topic;state.material=material;const kit=localKit(topic,material);const ai=await gemini('Create an accessible study kit for "'+topic+'". Use simple language. Return JSON only: {"summary":"","keyPoints":[],"flashcards":[{"q":"","a":""}],"questions":[{"text":"","options":["","","",""],"answer":"","explanation":""}]}. Material: '+material);if(ai){try{const p=JSON.parse(ai.replace(/```json|```/g,"").trim());kit.summary=p.summary||kit.summary;kit.keyPoints=p.keyPoints?.length?p.keyPoints:kit.keyPoints;kit.flashcards=p.flashcards?.length?p.flashcards:kit.flashcards;kit.questions=p.questions?.length?p.questions:kit.questions;setStatus("AI study kit generated.");}catch{setStatus("Study kit generated using the built-in accessible engine.");}}else setStatus("Study kit generated using the built-in accessible engine.");state.summary=kit.summary;state.questions=kit.questions;state.qIndex=0;state.level=1;state.correct=0;state.wrong=0;$("studyOutput").innerHTML="<h3>Simple explanation</h3><p>"+kit.summary+"</p><h3>Key points</h3><ul>"+kit.keyPoints.map(k=>"<li>"+k+"</li>").join("")+"</ul><h3>Flashcards</h3><div class='flashcards'>"+kit.flashcards.map(f=>"<div class='flashcard'><strong>"+f.q+"</strong><p>"+f.a+"</p></div>").join("")+"</div>";$("startQuizBtn").disabled=false;$("quizArea").innerHTML="<p class='muted'>Your personalized quiz is ready. "+kit.questions.length+" questions available.</p>";updateProgress();};
+
+$("askBtn").onclick=()=>{$("askArea").hidden=false;$("question").focus();};
+$("askSubmit").onclick=async()=>{const q=$("question").value.trim();if(!q)return;$("answerOutput").innerHTML="<p class='muted'>Thinking...</p>";const ai=await gemini("Explain this in simple, accessible language for a student. Topic: "+state.topic+". Material: "+state.material+". Question: "+q);const ans=ai||"Focus on the key ideas in your material about "+state.topic+". Important terms include: "+keywords(state.material).slice(0,4).join(", ")+". Re-read the related section, then explain it in your own words.";$("answerOutput").innerHTML="<p>"+ans+"</p>";speak(ans);};
+
+function renderQuestion(){const available=state.questions.filter(q=>q.level<=state.level);const q=available[state.qIndex%available.length]||state.questions[0];if(!q)return;$("quizArea").innerHTML="<p class='muted'>Question "+(state.qIndex+1)+" • Difficulty level "+state.level+"/3</p><p class='quiz-q'>"+q.text+"</p><div class='options'>"+q.options.map((o,i)=>"<button class='option' data-i='"+i+"'>"+String.fromCharCode(65+i)+". "+o+"</button>").join("")+"</div><button id='listenQ' class='btn small'>🔊 Listen to question</button>";$("listenQ").onclick=()=>speak(q.text);document.querySelectorAll(".option").forEach(b=>{b.onclick=()=>{const chosen=q.options[+b.dataset.i];const ok=chosen===q.answer;document.querySelectorAll(".option").forEach(x=>{if(x.textContent.includes(q.answer))x.classList.add("correct");});if(!ok)b.classList.add("wrong");if(ok){state.correct++;state.level=Math.min(3,state.level+1);}else{state.wrong++;state.level=Math.max(1,state.level-1);}const fb=ok?"✅ Correct! Moving to level "+state.level+". "+q.explanation:"❌ Not quite. Let’s try a simpler question. "+q.explanation;$("quizFeedback").innerHTML="<p>"+fb+"</p>";speak(fb);state.qIndex++;saveProgress(ok);setTimeout(renderQuestion,900);};});}
+$("startQuizBtn").onclick=()=>{state.qIndex=0;state.level=1;$("quizFeedback").innerHTML="";renderQuestion();};
+
+function progress(){return JSON.parse(localStorage.getItem("learnable_progress")||'{"answered":0,"correct":0,"topics":{},"lastDay":"","streak":0}');}
+function saveProgress(ok){const p=progress();const today=new Date().toDateString();if(p.lastDay!==today){const y=new Date(Date.now()-86400000).toDateString();p.streak=p.lastDay===y?(p.streak||0)+1:1;p.lastDay=today;}p.answered++;if(ok)p.correct++;p.topics[state.topic]=p.topics[state.topic]||{answered:0,correct:0};p.topics[state.topic].answered++;if(ok)p.topics[state.topic].correct++;localStorage.setItem("learnable_progress",JSON.stringify(p));updateProgress();}
+function updateProgress(){const p=progress();$("streakValue").textContent=p.streak||0;$("quizCount").textContent=p.answered||0;$("accuracyValue").textContent=p.answered?Math.round(p.correct/p.answered*100)+"%":"0%";$("masteredValue").textContent=Object.keys(p.topics||{}).length;const rows=Object.entries(p.topics||{}).map(([n,v])=>{const pct=v.answered?Math.round(v.correct/v.answered*100):0;return"<div class='topic-item'><strong>"+n+"</strong><span>"+pct+"%</span><div class='bar'><span style='width:"+pct+"%'></span></div></div>";}).join("");$("topicMastery").innerHTML=rows||"<p class='muted'>No topics practiced yet.</p>";}
+$("clearProgress").onclick=()=>{localStorage.removeItem("learnable_progress");updateProgress();};
+updateProgress();
+</script>
+</body>
+</html>
