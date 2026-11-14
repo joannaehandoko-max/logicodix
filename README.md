@@ -197,4 +197,156 @@ The HTML file contains the application's HTML structure, CSS styling, and JavaSc
 
 ---
 
+## 13. Frontend Documentation
+
+**Framework and technology.** The frontend is built with plain HTML, CSS and JavaScript (vanilla JS), with no framework and no build step. The whole app lives in one file, `public/index.html`, so it can be opened directly and served by the Node.js server.
+
+| Component | Technology | Purpose |
+|---|---|---|
+| Interface | Semantic HTML5 + CSS (theme variables) | Pages, responsive layout, display themes |
+| Logic | JavaScript (ES2020) | Builds study kits, quizzes, cards, practice games and chat |
+| Fonts | Google Fonts: Press Start 2P, Space Grotesk | Pixel-art style and readable text |
+| Sign-in and saved notes (optional) | `@supabase/supabase-js@2` via jsDelivr CDN | Authentication and storage in Supabase |
+| Local storage | `localStorage` | Theme, progress (XP, streak) and notes on the device |
+| Configuration | `public/config.js` | API address and public Supabase key (no secrets) |
+
+**UI component structure** (all in `public/index.html`):
+
+| Element | Role |
+|---|---|
+| `main#main` | Main study area: topic and notes input, summary, key points |
+| `aside#displayPanel` | Display and accessibility settings panel |
+| `section#cards` | Flashcards and practice |
+| Quiz and practice games | Multiple-choice quiz with explanations, memory game and letter-scramble game |
+| Poppy (chat) | AI study buddy, available from the chat panel |
+| `dialog#welcomeDialog` | First-visit welcome |
+| `dialog#authDialog` | Sign in / sign up (when Supabase is configured) |
+| `dialog#setupDialog` | Setup guide |
+
+**Frontend flow.** The user pastes notes, and the frontend calls `POST /api/study-kit`. If the server or the AI is unavailable, the frontend automatically uses the built-in study-kit generator in the browser, so the app keeps working. Questions to Poppy go through `POST /api/chat` in the same way.
+
+**Assets.** There are no external image files. The site icon is an inline SVG, the pixel-art style characters and visuals are made with CSS/HTML, and fonts are loaded from Google Fonts.
+
+---
+
+## 14.Backend Documentation
+
+**Technology.** Node.js 20+ with no extra dependencies (only the built-in `http`, `fs` and `path` modules). AI uses the Google Gemini API (model `gemini-2.5-flash`, changeable with `GEMINI_MODEL`). The API key exists only on the server and is never sent to the browser.
+
+File structure:
+
+```
+server.js          HTTP server, routing, rate limit, CORS, static file serving
+lib/env.js         .env file reader
+lib/gemini.js      Gemini API client (key sent in a header, not the URL)
+lib/study.js       AI prompts, result validation and normalization
+tests/api.test.js  11 automated tests (use a fake Gemini)
+public/            Frontend (index.html, config.js)
+```
+
+### API Endpoints
+
+| Method | Endpoint | Body | Success response |
+|---|---|---|---|
+| `POST` | `/api/study-kit` | `{ "topic": string, "notes": string }` | `200` `{ summary, points[], cards[{front,back,term}], quiz[{question,options[4],answer,explanation}], terms[] }` |
+| `POST` | `/api/chat` | `{ "message": string, "topic": string, "notes": string }` | `200` `{ "reply": string }` |
+| `GET` | `/api/health` | none | `200` `{ "ok": true, "ai": true/false }` |
+
+Error codes: `400` invalid input (empty topic, notes shorter than 30 characters, broken JSON), `413` request body too large (max 32 KB), `429` too many requests (max 30 per minute per IP), `502` AI service failed or its result was unusable, `503` AI key not configured. For `502` and `503` the frontend automatically switches to the built-in generator.
+
+Safeguards: input validation and length limits, per-IP rate limiting, AI output is rebuilt and validated before reaching the user (every question must have 4 unique options and an answer that is one of them), user notes are treated as data and not as instructions to reduce prompt injection, and request contents are not logged or stored.
+
+### Database Schema (optional, Supabase)
+
+The database is only used for sign-in and saving notes. Without Supabase, data is kept in the device's `localStorage`. Run this SQL in the Supabase SQL Editor:
+
+```sql
+create table if not exists study_sets (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  topic text not null,
+  material text,
+  summary text,
+  points jsonb,
+  cards jsonb,
+  quiz jsonb,
+  updated_at timestamptz default now(),
+  unique (user_id, topic)
+);
+create table if not exists user_progress (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  xp int default 0,
+  answered int default 0,
+  correct int default 0,
+  streak int default 0,
+  last_day text,
+  topics jsonb default '{}',
+  mission jsonb default '{}',
+  updated_at timestamptz default now()
+);
+alter table study_sets enable row level security;
+alter table user_progress enable row level security;
+create policy "own sets" on study_sets for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "own progress" on user_progress for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+```
+
+Row Level Security is enabled, so each user can only read and change their own data.
+
+### .env.example
+
+```env
+# Copy to .env and fill in. Never commit .env.
+# Free key: https://aistudio.google.com/apikey
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-2.5-flash
+PORT=3000
+# Only needed if the frontend is hosted at a different address than this server (comma-separated)
+ALLOWED_ORIGIN=
+# Set to 1 behind a reverse proxy (Render, Railway, Fly) so rate limiting sees the real IP
+TRUST_PROXY=0
+```
+
+---
+
+## 15. Localhost Instructions
+
+**Requirements:** Node.js version 20 or newer (download at https://nodejs.org), Git, and a free Gemini API key from https://aistudio.google.com/apikey. There is no `npm install` step because the project has no external dependencies.
+
+1. **Download the project**
+   ```bash
+   git clone YOUR_REPOSITORY_URL
+   cd YOUR_REPOSITORY_FOLDER
+   ```
+2. **Check the Node.js version** (must be 20 or higher)
+   ```bash
+   node --version
+   ```
+3. **Create the `.env` file**
+   - macOS / Linux: `cp .env.example .env`
+   - Windows (Command Prompt): `copy .env.example .env`
+
+   Open `.env` and put your key after `GEMINI_API_KEY=`.
+4. **Start the app**
+   ```bash
+   npm start
+   ```
+   The terminal shows: `LearnAble running on http://localhost:3000 (AI on)`.
+5. **Open it in the browser:** http://localhost:3000
+6. **Try the AI features:** click the demo button to build a study kit, then ask Poppy a question. Check the server status at http://localhost:3000/api/health (it should show `"ai":true`).
+7. **Run the automated tests** (no real key needed)
+   ```bash
+   npm test
+   ```
+
+**Troubleshooting:**
+
+| Symptom | Cause and fix |
+|---|---|
+| `AI off: set GEMINI_API_KEY` | The key is not set in `.env`. Fill it in, then run `npm start` again. |
+| `Port 3000 already in use` | Set `PORT=3001` in `.env`, then open http://localhost:3001. |
+| `node` not recognized | Node.js is not installed, or the terminal needs to be reopened. |
+| Study kit stays basic | The server or AI failed and the app used its built-in generator. Check the terminal and `/api/health`. |
+
+(Optional) For sign-in and saved notes, create a Supabase project, run the SQL from the Database Schema section, then fill in `supabaseUrl` and `supabaseAnonKey` in `public/config.js`.
+
 **LearnAble – Learn in the way that works for you.**
