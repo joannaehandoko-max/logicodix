@@ -6,9 +6,10 @@
 
 - **Team Name:** Print_Owl
 - **Team Members:**
-  - [Member 1 – 
-  - [Member 2 – Full Name]
-  - [Add or remove members as needed]
+  - Member 1 – Syedya Moazma Gardesi
+  - Member 2 – Aulia Rameyza
+  - Member 3 - Joanna Evangeline Handoko
+  - Member 4 - Celvian Ghagatapraja Asifa
 - **Category:** Web
 - **Application Name:** LearnAble
 
